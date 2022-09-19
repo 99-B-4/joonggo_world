@@ -1,0 +1,3 @@
+certifi~=2022.9.14
+Flask~=2.2.2
+pymongo~=4.2.0
