@@ -181,6 +181,25 @@
                 $('#posts-box').append(temp_html)
             }
         }
+
+
+        {# 전화번호 자동으로 '-' 채워주는 함수#}
+        const telHyphen = (target) => {
+            target.value = target.value
+                .replace(/[^0-9]/g, '')
+                .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
+        }
+
+        {# 이미지 업로드 시 미리보기 #}
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#preimg').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
     </script>
 
 
@@ -199,119 +218,129 @@
             </button>
             <button class="btn-logout">로그아웃</button>
         </div>
+    </div>
+</header>
 
-        <!-- Modal -->
-        <div class="modal " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">상품 등록</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="container-md border border-dark rounded-3 mt-3 bg-light">
-                                <div class="container text-center mt-3">
-                                    <div class="row">
-                                        <div class="col">
-                                            <img
-                                                    class="image rounded mx-auto d-block border border-dark mb-3"
-                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkLYsNPFKvw3kqvvdQpL5QHnP5rq371aksTtt15ppO&s"
-                                                    alt=""
-                                            />
-                                            <div class="input-group">
-                                                <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onchange="loadFile(this)"
-                                                        class="form-control"
-                                                        placeholder=""
-                                                        aria-label="Example text with button addon"
-                                                        aria-describedby="button-addon1"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div class="col mt-3">
-                                            <select
-                                                    class="form-select form-select-lg mb-5"
-                                                    aria-label=".form-select-lg example"
-                                            >
-                                                <option selected>지역 선택</option>
-                                                <option value="1">서울특별시</option>
-                                                <option value="2">경기도</option>
-                                                <option value="3">인천광역시</option>
-                                                <option value="1">대전광역시</option>
-                                                <option value="1">광주광역시</option>
-                                                <option value="1">대구광역시</option>
-                                                <option value="1">울산광역시</option>
-                                                <option value="1">부산광역시</option>
-                                                <option value="1">강원도</option>
-                                                <option value="2">충청북도</option>
-                                                <option value="2">충청남도</option>
-                                                <option value="3">전라북도</option>
-                                                <option value="3">전라남도</option>
-                                                <option value="1">경상북도</option>
-                                                <option value="1">경상남도</option>
-                                                <option value="2">제주도</option>
-                                            </select>
-                                            <div class="input-group mb-5">
-                                                <span class="input-group-text" id="basic-addon1">제목</span>
-                                                <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        aria-label="Username"
-                                                        aria-describedby="basic-addon1"
-                                                />
-                                            </div>
-                                            <div class="input-group mb-5">
-                                                <span class="input-group-text" id="basic-addon2">연락처</span>
-                                                <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        aria-label="Username"
-                                                        aria-describedby="basic-addon1"
-                                                />
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">₩</span>
-                                                <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        aria-label="Amount (to the nearest dollar)"
-                                                />
-                                            </div>
-                                        </div>
+<div class="modal " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">상품 등록</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="modal-form" action="/api/newpost" method="POST" enctype="multipart/form-data">
+                    <div class="container-md border border-dark rounded-3 mt-3 bg-light">
+                        <div class="container text-center mt-3">
+                            <div class="row">
+                                <div class="col">
+                                    <img
+                                            id="preimg"
+                                            class="image rounded mx-auto d-block border border-dark mb-3"
+                                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkLYsNPFKvw3kqvvdQpL5QHnP5rq371aksTtt15ppO&s"
+                                            alt=""
+                                            style="height: 280px"
+                                    />
+                                    <div class="input-group">
+                                        <input
+                                                name="img"
+                                                required
+                                                type="file"
+                                                accept="image/*"
+                                                class="form-control"
+                                                onchange="readURL(this)"
+                                        />
                                     </div>
-                                    <div class="row align-items-center mt-3 mb-3">
-                                        <div class="col">
-                                            <p class="h3">상세내용</p>
-
-                                            <div class="input-group">
-                <textarea
-                        class="form-control"
-                        aria-label="With textarea"
-                        style="height: 400px"
-                ></textarea>
-                                            </div>
-                                            <div class="d-grid mt-3">
-                                                <button class="btn btn-primary" type="button">작성</button>
-                                            </div>
-                                        </div>
+                                </div>
+                                <div class="col mt-3">
+                                    <select
+                                            name="area"
+                                            required
+                                            class="form-select form-select-lg mb-5"
+                                            aria-label=".form-select-lg example"
+                                    >
+                                        <option selected value="0">지역 선택</option>
+                                        <option value="1">서울특별시</option>
+                                        <option value="2">경기도</option>
+                                        <option value="3">인천광역시</option>
+                                        <option value="4">대전광역시</option>
+                                        <option value="5">광주광역시</option>
+                                        <option value="6">대구광역시</option>
+                                        <option value="7">울산광역시</option>
+                                        <option value="8">부산광역시</option>
+                                        <option value="9">강원도</option>
+                                        <option value="10">충청북도</option>
+                                        <option value="11">충청남도</option>
+                                        <option value="12">전라북도</option>
+                                        <option value="13">전라남도</option>
+                                        <option value="14">경상북도</option>
+                                        <option value="15">경상남도</option>
+                                        <option value="16">제주도</option>
+                                    </select>
+                                    <div class="input-group mb-5">
+                                        <span class="input-group-text" id="basic-addon1">제목</span>
+                                        <input
+                                                name="title"
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="제목"
+                                        />
+                                    </div>
+                                    <div class="input-group mb-5">
+                                        <span class="input-group-text" id="basic-addon2">연락처</span>
+                                        <input
+                                                name="contact"
+                                                type="tel"
+                                                class="form-control m-input"
+                                                id="telInput"
+                                                required
+                                                oninput="telHyphen(this)"
+                                                pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
+                                                maxlength="13"
+                                                placeholder="예) 010-1234-5678"
+                                        />
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">₩</span>
+                                        <input
+                                                name="amount"
+                                                type="number"
+                                                required
+                                                pattern="^[0-9]+$"
+                                                class="form-control"
+                                                placeholder="예) 1000"
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                            <div class="row align-items-center mt-3 mb-3">
+                                <div class="col">
+                                    <p class="h3">상세내용</p>
+
+                                    <div class="input-group">
+                                                <textarea
+                                                        name="content"
+                                                        class="form-control"
+                                                        style="height: 400px"
+                                                        placeholder="상세내용"
+                                                ></textarea>
+                                    </div>
+                                    <div class="d-grid mt-3">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="button" class="btn btn-primary">확인</button>
-                    </div>
-                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="submit" form="modal-form" class="btn btn-primary">확인</button>
             </div>
         </div>
     </div>
-</header>
+</div>
 
 <form>
     <!-- image -->
