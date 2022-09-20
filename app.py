@@ -13,15 +13,17 @@ db = client.joongo_world
 def home():
    return render_template('mainpage.html')
 
-# 개시글 불러오기
+# 개시글 불러오기 / 검색
 @app.route('/api/postlist', methods=['GET'])
 def api_postlist():
+    parameter_dict = request.args.to_dict()
+    if len(parameter_dict) != 0 and request.args.get('filter') != '':
+        posts = list(db.posts.find({'title': {'$regex': request.args.get('filter')}}, {'_id': False}))
+        return jsonify({'all_posts': posts})
 
     posts = list(db.posts.find({}, {'_id': False, }))
     print(posts)
     return jsonify({'all_posts': posts})
-
-
 @app.route('/api/newpost', methods=['POST'])
 def api_newpost():
         if request.method == 'POST':

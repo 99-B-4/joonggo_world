@@ -153,6 +153,30 @@
             })
         }
 
+
+         {# 검색 기능 함수 #}
+
+        function search_event() {
+            search_val = $('#searchKwd').val()
+            $('#noresult').remove()
+            $('#posts-box').empty()
+            $.ajax({
+                type: "get",
+                url: "/api/postlist",
+                data: {filter: search_val},
+                success: function (response) {
+                    let posts = response['all_posts']
+                    if (posts.length < 1) {
+                        temp_html = `
+                            <h1 class="card-title" id="noresult">결과가 없습니다</h1>
+                        `
+                        $('.mycards').append(temp_html)
+                    }
+                    load_post(response)
+                }
+            })
+        }
+
         function load_post(response) {
             let posts = response['all_posts']
             for (let i = 0; i < posts.length; i++) {
@@ -342,28 +366,28 @@
     </div>
 </div>
 
-<form>
-    <!-- image -->
-    <div class="mytitle"></div>
+<!-- image -->
+<div class="mytitle"></div>
 
-    <!-- search -->
-    <div class="nav-search">
-        <div class="search">
-            <input class="search-input"
-                   type="search"
-                   placeholder="검색어를 입력하세요."
-                   aria-label="Search"/>
-            <button class="search-button" type="submit">Search</button>
-        </div>
-
+<!-- search -->
+<div class="nav-search">
+    <div class="search">
+        <input class="search-input"
+               id="searchKwd"
+               type="search"
+               placeholder="검색어를 입력하세요."
+               aria-label="Search"
+               onkeyup="if(window.event.keyCode===13){search_event()}"
+        />
+        <button class="search-button" type="button" onclick="search_event()">Search</button>
     </div>
+</div>
 
-    <!-- content -->
-    <div class="mycards">
-        <div class="row row-cols-1 row-cols-md-4 g-4" id="posts-box">
-        </div>
+<!-- content -->
+<div class="mycards">
+    <div class="row row-cols-1 row-cols-md-4 g-4" id="posts-box">
     </div>
-</form>
+</div>
 
 </body>
 </html>
