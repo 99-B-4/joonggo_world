@@ -110,12 +110,8 @@
             text-underline-position: under;
         }
 
-        .mycomment {
-            color: gray;
-        }
-
         .mycards {
-            margin: 20px auto 0px auto;
+            margin: 20px auto 0 auto;
             width: 95%;
             max-width: 1200px;
         }
@@ -142,6 +138,7 @@
         })
 
         {#DB 값 가져오기#}
+
         function listing() {
             $.ajax({
                 type: "GET",
@@ -154,7 +151,7 @@
         }
 
 
-         {# 검색 기능 함수 #}
+        {# 검색 기능 함수 #}
 
         function search_event() {
             search_val = $('#searchKwd').val()
@@ -184,7 +181,6 @@
                 let img = posts[i]['img']
                 let contact = posts[i]['contact']
                 let amount = posts[i]['amount']
-                let content = posts[i]['content']
 
                 let temp_html = `
                         <div class="col">
@@ -192,6 +188,8 @@
                                 <img
                                         src="../static/image/${img}"
                                         class="card-img-top"
+                                        onerror="this.onerror=null; this.src='../static/image/null.png';"
+                                        alt=""
                                 />
                                 <div class="card-body">
                                     <h5 class="card-title">${title}</h5>
@@ -211,10 +209,11 @@
         const telHyphen = (target) => {
             target.value = target.value
                 .replace(/[^0-9]/g, '')
-                .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
+                .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(-{1,2})$/g, "");
         }
 
         {# 이미지 업로드 시 미리보기 #}
+
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -303,8 +302,9 @@
                                         <option value="16">제주도</option>
                                     </select>
                                     <div class="input-group mb-5">
-                                        <span class="input-group-text" id="basic-addon1">제목</span>
+                                        <label class="input-group-text" for="title">제목</label>
                                         <input
+                                                id="title"
                                                 name="title"
                                                 type="text"
                                                 class="form-control"
@@ -312,7 +312,7 @@
                                         />
                                     </div>
                                     <div class="input-group mb-5">
-                                        <span class="input-group-text" id="basic-addon2">연락처</span>
+                                        <label class="input-group-text" for="telInput">연락처</label>
                                         <input
                                                 name="contact"
                                                 type="tel"
@@ -326,8 +326,9 @@
                                         />
                                     </div>
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text">₩</span>
+                                        <label class="input-group-text" for="amount">₩</label>
                                         <input
+                                                id="amount"
                                                 name="amount"
                                                 type="number"
                                                 required
@@ -340,15 +341,15 @@
                             </div>
                             <div class="row align-items-center mt-3 mb-3">
                                 <div class="col">
-                                    <p class="h3">상세내용</p>
-
+                                    <label for="content" class="h3">상세내용</label>
                                     <div class="input-group">
-                                                <textarea
-                                                        name="content"
-                                                        class="form-control"
-                                                        style="height: 400px"
-                                                        placeholder="상세내용"
-                                                ></textarea>
+                                        <textarea
+                                                id="content"
+                                                name="content"
+                                                class="form-control"
+                                                style="height: 400px"
+                                                placeholder="상세내용"
+                                        ></textarea>
                                     </div>
                                     <div class="d-grid mt-3">
                                     </div>
