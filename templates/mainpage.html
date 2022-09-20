@@ -136,6 +136,53 @@
         }
     </style>
 
+    <script>
+        $(document).ready(function () {
+            listing()
+        })
+
+        {#DB 값 가져오기#}
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "/api/postlist",
+                data: {},
+                success: function (response) {
+                    load_post(response)
+                }
+            })
+        }
+
+        function load_post(response) {
+            let posts = response['all_posts']
+            for (let i = 0; i < posts.length; i++) {
+                let title = posts[i]['title']
+                let img = posts[i]['img']
+                let contact = posts[i]['contact']
+                let amount = posts[i]['amount']
+                let content = posts[i]['content']
+
+                let temp_html = `
+                        <div class="col">
+                            <div class="card h-100">
+                                <img
+                                        src="../static/image/${img}"
+                                        class="card-img-top"
+                                />
+                                <div class="card-body">
+                                    <h5 class="card-title">${title}</h5>
+                                    <p class="card-text">가격: ${amount}₩</p>
+                                    <p class="card-text">연락처: ${contact}</p>
+                                </div>
+                            </div>
+                        </div>
+                        `
+
+                $('#posts-box').append(temp_html)
+            }
+        }
+    </script>
+
 
 </head>
 
@@ -284,59 +331,7 @@
 
     <!-- content -->
     <div class="mycards">
-        <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
-            <div class="col">
-                <div class="card h-100">
-                    <img
-                            src="https://img.hankyung.com/photo/202209/01.31159777.1.jpg"
-                            class="card-img-top"
-                    />
-                    <div class="card-body">
-                        <h5 class="card-title">상품제목</h5>
-                        <p class="card-text">가격</p>
-                        <p class="mycomment">여기에 상품에 대한 설명이 들어갑니다.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <img
-                            src="https://img.hankyung.com/photo/202209/01.31159777.1.jpg"
-                            class="card-img-top"
-                    />
-                    <div class="card-body">
-                        <h5 class="card-title">상품제목</h5>
-                        <p class="card-text">가격</p>
-                        <p class="mycomment">여기에 상품에 대한 설명이 들어갑니다.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <img
-                            src="https://img.hankyung.com/photo/202209/01.31159777.1.jpg"
-                            class="card-img-top"
-                    />
-                    <div class="card-body">
-                        <h5 class="card-title">상품제목</h5>
-                        <p class="card-text">가격</p>
-                        <p class="mycomment">여기에 상품에 대한 설명이 들어갑니다.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <img
-                            src="https://img.hankyung.com/photo/202209/01.31159777.1.jpg"
-                            class="card-img-top"
-                    />
-                    <div class="card-body">
-                        <h5 class="card-title">상품제목</h5>
-                        <p class="card-text">가격</p>
-                        <p class="mycomment">여기에 상품에 대한 설명이 들어갑니다.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="row row-cols-1 row-cols-md-4 g-4" id="posts-box">
         </div>
     </div>
 </form>

@@ -1,16 +1,24 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 import os
 app = Flask(__name__)
 
 from pymongo import MongoClient
 import certifi
-client = MongoClient(os.environ.get("MONGO"),tlsCAFile=certifi.where())
-db = client.dbsparta_test
+client = MongoClient('mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority', tlsCAFile=certifi.where())
+db = client.joongo_world
 
 
 @app.route('/')
 def home():
-   return render_template('index.html')
+   return render_template('mainpage.html')
+
+# 개시글 불러오기
+@app.route('/api/postlist', methods=['GET'])
+def api_postlist():
+
+    posts = list(db.posts.find({}, {'_id': False, }))
+    print(posts)
+    return jsonify({'all_posts': posts})
 
 
 if __name__ == '__main__':
