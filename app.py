@@ -10,7 +10,7 @@ db = client.dbsparta_test
 
 @app.route('/')
 def home():
-   return render_template('index.html')
+   return render_template('mainpage.html')
 
 
 if __name__ == '__main__':

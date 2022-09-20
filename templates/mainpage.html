@@ -135,7 +135,38 @@
 
         }
     </style>
+    <script>
+        $(document).ready(function () {
+            save();
+        });
 
+        function save() {
+            $.ajax({
+                type: 'get',
+                url: '/',
+                data: {},
+                success: function (response) {
+                    let rows = response['orders']
+                    for (let i = 0; i < rows.length; i++) {
+                        let name = rows[i]['name']
+                        let address = rows[i]['address']
+                        let size = rows[i]['size']
+
+                        let temp_html = ``
+                        $('#cards-box').append(temp_html)
+                    }
+                })
+        }
+        }
+
+
+        function modal_reset() {
+            $('input').val("");
+            $('textarea').val("");
+            $('select').val('지역 선택');
+        }
+
+    </script>
 
 </head>
 
@@ -247,9 +278,6 @@
                         style="height: 400px"
                 ></textarea>
                                             </div>
-                                            <div class="d-grid mt-3">
-                                                <button class="btn btn-primary" type="button">작성</button>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -257,8 +285,10 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="button" class="btn btn-primary">확인</button>
+                        <button type="button" class="btn btn-secondary" onclick="modal_reset()" data-bs-dismiss="modal">
+                            닫기
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="save">확인</button>
                     </div>
                 </div>
             </div>
@@ -295,6 +325,7 @@
                         <h5 class="card-title">상품제목</h5>
                         <p class="card-text">가격</p>
                         <p class="mycomment">여기에 상품에 대한 설명이 들어갑니다.</p>
+                        <p class="date">2022-09-08</p>
                     </div>
                 </div>
             </div>
@@ -308,6 +339,7 @@
                         <h5 class="card-title">상품제목</h5>
                         <p class="card-text">가격</p>
                         <p class="mycomment">여기에 상품에 대한 설명이 들어갑니다.</p>
+                        <p class="date">2022-09-08</p>
                     </div>
                 </div>
             </div>
@@ -321,6 +353,7 @@
                         <h5 class="card-title">상품제목</h5>
                         <p class="card-text">가격</p>
                         <p class="mycomment">여기에 상품에 대한 설명이 들어갑니다.</p>
+                        <p class="date">2022-09-08</p>
                     </div>
                 </div>
             </div>
@@ -334,6 +367,7 @@
                         <h5 class="card-title">상품제목</h5>
                         <p class="card-text">가격</p>
                         <p class="mycomment">여기에 상품에 대한 설명이 들어갑니다.</p>
+                        <p class="date">2022-09-08</p>
                     </div>
                 </div>
             </div>
