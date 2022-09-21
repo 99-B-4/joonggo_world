@@ -255,6 +255,7 @@
                                                                 id="preimg"
                                                                 class="image rounded mx-auto d-block border border-dark mb-3"
                                                                 src="../static/image/${img}"
+                                                                onerror="this.onerror=null; this.src='../static/image/null.png';"
                                                                 alt=""
                                                                 style="height: 280px"
                                                         />
@@ -472,7 +473,7 @@
 </div>
 
 {# 상세페이지 모달#}
-<div class="modal fade" id="post_detail" tabindex="-1" aria-labelledby="post_detailLabel" aria-hidden="true">
+<div class="modal" id="post_detail" tabindex="-1" aria-labelledby="post_detailLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
