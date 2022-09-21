@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head >
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -61,7 +61,7 @@
             }
             $.ajax({
                 type: "POST",
-                url: "/sign_in",
+                url: "/api/login",
                 data: {
                     username_give: username,
                     password_give: password
@@ -116,7 +116,7 @@
             }
             $.ajax({
                 type: "POST",
-                url: "/sign_up/save",
+                url: "/api/register",
                 data: {
                     username_give: username,
                     password_give: password
@@ -164,7 +164,7 @@
             $("#help-id").addClass("is-loading")
             $.ajax({
                 type: "POST",
-                url: "/sign_up/check_dup",
+                url: "/api/register/check_dup",
                 data: {
                     username_give: username
                 },
