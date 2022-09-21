@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .wrap{
+            width: 538px;
+            margin: auto;
+        }
+
+    </style>
+</head>
+<body>
+  <div class="wrap">
+      E-Mail
+    <input name="email1" type="text" placeholder="이메일"> @ <input name="email2" type="text" placeholder="직접입력">
+    <select name="select_email" onChange="selectEmail(this)">
+      <option value="" selected>직접입력</option>
+      <option value="naver.com">naver.com</option>
+      <option value="gmail.com">gmail.com</option>
+      <option value="hanmail.com">hanmail.com</option>
+    </select>
+
+    <p>Password <input type="text" placeholder="비밀번호"></p>
+    <p>PW Check <input type="text" placeholder="비밀번호 확인"></p>
+
+      <button>회원가입</button>
+  </div>
+</body>
+</html>
