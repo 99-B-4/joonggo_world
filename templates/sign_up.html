@@ -2,30 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <title>joonggo_world_signup</title>
     <style>
         .wrap{
+            width: 100%;
+            height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .box{
             width: 538px;
-            margin: auto;
         }
 
     </style>
+    <script>
+        function selectEmail(ele) {
+            var $ele = $(ele);
+            var $email2 = $('input[name=email2]');
+
+            // '1'인 경우 직접입력
+            if ($ele.val() == "1") {
+                $email2.attr('readonly', false);
+                $email2.val('');
+            } else {
+                $email2.attr('readonly', true);
+                $email2.val($ele.val());
+            }
+        }
+    </script>
 </head>
 <body>
-  <div class="wrap">
-      E-Mail
-    <input name="email1" type="text" placeholder="이메일"> @ <input name="email2" type="text" placeholder="직접입력">
-    <select name="select_email" onChange="selectEmail(this)">
-      <option value="" selected>직접입력</option>
-      <option value="naver.com">naver.com</option>
-      <option value="gmail.com">gmail.com</option>
-      <option value="hanmail.com">hanmail.com</option>
-    </select>
+    <div class="wrap">
+        <div class="box">
+            E-Mail
+            <input name="email1" type="text" placeholder="이메일"> @ <input name="email2" type="text" placeholder="직접입력">
+            <select name="select_email" onChange="selectEmail(this)">
+                <option value="1" selected>직접입력</option>
+                <option value="naver.com">naver.com</option>
+                <option value="gmail.com">gmail.com</option>
+                <option value="hanmail.com">hanmail.com</option>
+            </select>
 
-    <p>Password <input type="text" placeholder="비밀번호"></p>
-    <p>PW Check <input type="text" placeholder="비밀번호 확인"></p>
+            <p>Password <input type="text" placeholder="비밀번호"></p>
+            <p>PW Check <input type="text" placeholder="비밀번호 확인"></p>
 
-      <button>회원가입</button>
-  </div>
+            <button>회원가입</button>
+        </div>
+    </div>
+
 </body>
 </html>
