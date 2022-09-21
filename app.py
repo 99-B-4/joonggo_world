@@ -8,11 +8,13 @@ app = Flask(__name__)
 
 from pymongo import MongoClient
 
-import certifi
+# import certifi
+# client = MongoClient(
+#     'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
+#     tlsCAFile=certifi.where())
+client = MongoClient('localhost', 27017, username="test", password="test")
 
-client = MongoClient(
-    'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
-    tlsCAFile=certifi.where())
+
 db = client.joongo_world
 SECRET_KEY = 'SPARTA'
 
