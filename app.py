@@ -9,12 +9,12 @@ app = Flask(__name__)
 
 from pymongo import MongoClient
 
-import certifi
+# import certifi
+# client = MongoClient(
+#     'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
+#     tlsCAFile=certifi.where())
+client = MongoClient('localhost', 27017, username="test", password="test")
 
-client = MongoClient(
-    'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
-    tlsCAFile=certifi.where())
-# client = MongoClient('localhost', 27017, username="test", password="test")
 
 db = client.joongo_world
 SECRET_KEY = 'SPARTA'
@@ -36,13 +36,13 @@ def home():
 @app.route('/login')
 def login():
     msg = request.args.get("msg")
-    return render_template('sign_in.html', msg=msg)
+    return render_template('login.html', msg=msg)
 
 
 @app.route('/api/login', methods=['POST'])
 def api_login():
-    id_receive = request.form['id_give']
-    pw_receive = request.form['pw_give']
+    id_receive = request.form['username_give']
+    pw_receive = request.form['password_give']
 
     # 회원가입 때와 같은 방법으로 pw를 암호화합니다.
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
@@ -64,34 +64,28 @@ def api_login():
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
-@app.route('/api/nick', methods=['GET'])
-def api_valid():
-    token_receive = request.cookies.get('mytoken')
 
-    # try / catch 문?
-    # try 아래를 실행했다가, 에러가 있으면 except 구분으로 가란 얘기입니다.
-
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
-        return jsonify({'result': 'success', 'nickname': userinfo['nick']})
-    except jwt.ExpiredSignatureError:
-        # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
-        return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
-    except jwt.exceptions.DecodeError:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+@app.route('/register')
+def register():
+    return render_template('sign_up.html')
 
 @app.route('/api/register', methods=['POST'])
 def api_register():
-    id_receive = request.form['id_give']
-    pw_receive = request.form['pw_give']
-    nickname_receive = request.form['nickname_give']
+    id_receive = request.form['username_give']
+    pw_receive = request.form['password_give']
+    nickname_receive = request.form['username_give']
 
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
 
     db.user.insert_one({'id': id_receive, 'pw': pw_hash, 'nick': nickname_receive})
 
     return jsonify({'result': 'success'})
+
+@app.route('/api/register/check_dup', methods=['POST'])
+def check_dup():
+   username_receive = request.form['username_give']
+   exists = bool(db.users.find_one({"username": username_receive}))
+   return jsonify({'result': 'success', 'exists': exists})
 
 
 # 게시글 불러오기 / 검색 API
