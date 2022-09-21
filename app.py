@@ -3,12 +3,18 @@ from flask import Flask, render_template, jsonify, redirect, request, url_for
 import os
 import jwt
 import hashlib
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
 from pymongo import MongoClient
 
-client = MongoClient('localhost', 27017, username="test", password="test")
+import certifi
+
+client = MongoClient(
+    'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
+    tlsCAFile=certifi.where())
+# client = MongoClient('localhost', 27017, username="test", password="test")
 
 db = client.joongo_world
 SECRET_KEY = 'SPARTA'
@@ -75,11 +81,6 @@ def api_valid():
     except jwt.exceptions.DecodeError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
-
-@app.route('/register')
-def register():
-    return render_template('sign_up.html')
-
 @app.route('/api/register', methods=['POST'])
 def api_register():
     id_receive = request.form['id_give']
@@ -98,19 +99,22 @@ def api_register():
 def api_postlist():
     parameter_dict = request.args.to_dict()
     if len(parameter_dict) != 0 and request.args.get('filter') != '':
-        posts = list(db.posts.find({'title': {'$regex': request.args.get('filter')}}, {}))
+        posts = list(db.posts.find({'title': {'$regex': request.args.get('filter')}},
+                                   {"_id": {"$toString": "$_id"}, "title": 1, "img": 1, "contact": 1, "amount": 1,
+                                    "content": 1}))
         return jsonify({'all_posts': posts})
 
-    posts = list(db.posts.find({}, {}))
+    posts = list(db.posts.find({}, {"_id": {"$toString": "$_id"}, "title": 1, "img": 1, "contact": 1, "amount": 1,
+                                    "content": 1}))
+    print(posts)
     return jsonify({'all_posts': posts})
 
 
-# 게시글 불러오기 / 검색 API
+# 게시글 상세
 @app.route('/api/post', methods=['GET'])
 def api_post():
     print(request.args.get('p_id'))
-    post = list(db.posts.find({'_id': int(request.args.get('p_id'))}, {}))
-    print(post)
+    post = list(db.posts.find({'_id': ObjectId(request.args.get('p_id'))}, {"_id": 0}))
     return jsonify({'all_posts': post})
 
 
@@ -121,9 +125,6 @@ def api_newpost():
         token_receive = request.cookies.get('mytoken')
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
-
-        # 포스트 id값
-        id = len(list(db.posts.find({}, {'_id': False, })))
 
         # POST방식으로 form data가져옴
         result = request.form
@@ -142,7 +143,6 @@ def api_newpost():
         # DB업로드
         db.posts.insert_one(
             {
-                '_id': id,
                 'user': userinfo['nick'],
                 'title': result.get('title'),
                 'img': f'{filename}.{extension}',
