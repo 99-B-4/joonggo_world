@@ -23,18 +23,29 @@ def home():
 def api_postlist():
     parameter_dict = request.args.to_dict()
     if len(parameter_dict) != 0 and request.args.get('filter') != '':
-        posts = list(db.posts.find({'title': {'$regex': request.args.get('filter')}}, {'_id': False}))
+        posts = list(db.posts.find({'title': {'$regex': request.args.get('filter')}}, {}))
         return jsonify({'all_posts': posts})
 
-    posts = list(db.posts.find({}, {'_id': False, }))
-    print(posts)
+    posts = list(db.posts.find({}, {}))
     return jsonify({'all_posts': posts})
+
+
+# 게시글 불러오기 / 검색 API
+@app.route('/api/post', methods=['GET'])
+def api_post():
+    print(request.args.get('p_id'))
+    post = list(db.posts.find({'_id': int(request.args.get('p_id'))}, {}))
+    print(post)
+    return jsonify({'all_posts': post})
 
 
 # 게시글 작성 API
 @app.route('/api/newpost', methods=['POST'])
 def api_newpost():
     if request.method == 'POST':
+        # 포스트 id값
+        id = len(list(db.posts.find({}, {'_id': False, })))
+
         # POST방식으로 form data가져옴
         result = request.form
 
@@ -52,8 +63,8 @@ def api_newpost():
         # DB업로드
         db.posts.insert_one(
             {
+                '_id': id,
                 'title': result.get('title'),
-                'area': result.get('area'),
                 'img': f'{filename}.{extension}',
                 'contact': result.get('contact'),
                 'amount': result.get('amount'),
