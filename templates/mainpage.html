@@ -16,36 +16,15 @@
             rel="stylesheet"
     />
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous"></script>
-
+            crossorigin="anonymous">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
 
     <style>
-        .nav-bar {
-            width: 100%;
-            height: 60px;
-
-            margin: 5px;
-
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            margin: 15px;
-            font-size: 40px;
-        }
-
-        .nav-bar .menu {
-            margin-right: 10px;
-        }
-
         .menu > button {
             background-color: transparent;
             border: transparent;
@@ -77,7 +56,6 @@
             align-items: center;
             justify-content: center;
         }
-
 
         .nav-search {
 
@@ -142,15 +120,16 @@
 
         }
     </style>
-
     <script>
         $(document).ready(function () {
             listing()
             click()
         })
 
-        {#DB 값 가져오기#}
 
+        // #########################################################
+        // 게시글 DB에서 가져오기
+        // #########################################################
         function listing() {
             $.ajax({
                 type: "GET",
@@ -163,22 +142,23 @@
         }
 
 
-        {# 검색 기능 함수 #}
-
+        // #########################################################
+        // 검색한 게시글 DB에서 가져오기
+        // #########################################################
         function search_event() {
             search_val = $('#searchKwd').val()
             $('#noresult').remove()
             $('#posts-box').empty()
             $.ajax({
                 type: "get",
-                url: "/api/postlist",
-                data: {filter: search_val},
+                url: "/api/postlist/" + search_val,
+                data: {},
                 success: function (response) {
                     let posts = response['all_posts']
                     if (posts.length < 1) {
                         let temp_html = `
-                            <h1 class="card-title" id="noresult">결과가 없습니다</h1>
-                        `
+                                <h1 class="card-title" id="noresult">결과가 없습니다</h1>
+                            `
                         $('.mycards').append(temp_html)
                     }
                     load_post(response)
@@ -186,6 +166,10 @@
             })
         }
 
+
+        // #########################################################
+        // DB정보 포스트로 보여주기
+        // #########################################################
         function load_post(response) {
             let posts = response['all_posts']
             for (let i = 0; i < posts.length; i++) {
@@ -195,39 +179,52 @@
                 let user = posts[i]['user']
                 let contact = posts[i]['contact']
                 let amount = posts[i]['amount']
-
                 let temp_html = `
-                        <div class="col" >
-                            <div class="card h-100" id=${p_id}>
-                                <img
-                                        src="../static/image/${img}"
-                                        class="card-img-top post"
-                                        onerror="this.onerror=null; this.src='../static/image/null.png';"
-                                        alt=""
-                                />
-                                <div class="card-body post">
-                                    <h5 class="card-title">${title}</h5>
-                                    <p class="card-text">작성자: ${user}₩</p>
-                                    <p class="card-text">가격: ${amount}₩</p>
-                                    <p class="card-text">연락처: ${contact}</p>
+                            <div class="col" >
+                                <div class="card h-100" id=${p_id}>
+                                    <img
+                                            src="../static/image/${img}"
+                                            class="card-img-top post"
+                                            onerror="this.onerror=null; this.src='../static/image/null.png';"
+                                            alt=""
+                                    />
+                                    <div class="card-body post">
+                                        <h5 class="card-title">${title}</h5>
+                                        <p class="card-text">작성자: ${user}</p>
+                                        <p class="card-text">가격: ${amount}₩</p>
+                                        <p class="card-text">연락처: ${contact}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        `
+                            `
                 $('#posts-box').append(temp_html)
             }
         }
 
 
-        {# 전화번호 자동으로 '-' 채워주는 함수#}
+        // #########################################################
+        // 전화번호 '-' 자동으로 채워주기
+        // #########################################################
         const telHyphen = (target) => {
             target.value = target.value
                 .replace(/[^0-9]/g, '')
                 .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(-{1,2})$/g, "");
         }
 
-        {# 이미지 업로드 시 미리보기 #}
 
+        // #########################################################
+        // 가격 ',' 자동으로 채워주기
+        // #########################################################
+        const wonComma = (target) => {
+            target.value = target.value
+                .replace(/[^0-9]/g, '')
+                .replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        }
+
+
+        // #########################################################
+        // 업로드 한 사진 가져오기
+        // #########################################################
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -239,14 +236,28 @@
         }
 
 
+        // #########################################################
+        // 로그아웃
+        // #########################################################
+        function logout() {
+            $.removeCookie('mytoken')
+            window.location.href = "/"
+
+        }
+
+
+        // #########################################################
+        // 상세페이지 모달 생성 및 표출
+        // #########################################################
         function click() {
-            $('#posts-box').click(function (e) { // 상세페이지 불러오기
-                let p_id = e.target.closest('.card').getAttribute('id'); // 클릭한 곳의 id값 가져오기
+            $('#posts-box').click(function (e) {
+                // 클릭한 곳의 id값 가져오기
+                let p_id = e.target.closest('.card').getAttribute('id');
                 $('.modal_box').empty()
                 $.ajax({
                     type: "GET",
-                    url: "/api/post",
-                    data: {p_id: p_id},
+                    url: "/api/postdetail/" + p_id,
+                    data: {},
                     success: function (response) {
                         console.log(response)
                         let posts = response['all_posts']
@@ -258,77 +269,75 @@
                             let content = posts[i]['content']
 
                             let temp_html = `
-                                            <div class="row">
-                                                    <div class="col">
-                                                        <img
-                                                                id="preimg"
-                                                                class="image rounded mx-auto d-block border border-dark mb-3"
-                                                                src="../static/image/${img}"
-                                                                onerror="this.onerror=null; this.src='../static/image/null.png';"
-                                                                alt=""
-                                                                style="height: 280px"
-                                                        />
-                                                    </div>
-                                                    <div class="col mt-3">
-                                                        <div class="input-group mb-5">
-                                                            <label class="input-group-text" for="title">제목</label>
-                                                            <input
-                                                                    id="title"
-                                                                    name="title"
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    placeholder="제목"
-                                                                    readonly
-                                                                    value=${title}
+                                                <div class="row">
+                                                        <div class="col">
+                                                            <img
+                                                                    id="preimg"
+                                                                    class="image rounded mx-auto d-block border border-dark mb-3"
+                                                                    src="../static/image/${img}"
+                                                                    onerror="this.onerror=null; this.src='../static/image/null.png';"
+                                                                    alt=""
+                                                                    style="height: 280px"
                                                             />
                                                         </div>
-                                                        <div class="input-group mb-5">
-                                                            <label class="input-group-text" for="telInput">연락처</label>
-                                                            <input
-                                                                    name="contact"
-                                                                    type="tel"
-                                                                    class="form-control m-input"
-                                                                    id="telInput"
-                                                                    required
-                                                                    oninput="telHyphen(this)"
-                                                                    pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
-                                                                    maxlength="13"
-                                                                    placeholder="예) 010-1234-5678"
-                                                                    readonly
-                                                                    value=${contact}
-                                                            />
-                                                        </div>
-                                                        <div class="input-group mb-3">
-                                                            <label class="input-group-text" for="amount">₩</label>
-                                                            <input
-                                                                    id="amount"
-                                                                    name="amount"
-                                                                    type="number"
-                                                                    pattern="^[0-9]+$"
-                                                                    class="form-control"
-                                                                    placeholder="예) 1000"
-                                                                    readonly
-                                                                    value=${amount}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row align-items-center mt-3 mb-3">
-                                                    <div class="col">
-                                                        <label for="content" class="h3">상세내용</label>
-                                                        <div class="input-group">
-                                                                <pre
-                                                                        id="content"
-                                                                        name="content"
+                                                        <div class="col mt-3">
+                                                            <div class="input-group mb-5">
+                                                                <label class="input-group-text" for="title">제목</label>
+                                                                <input
+                                                                        id="title"
+                                                                        name="title"
+                                                                        type="text"
                                                                         class="form-control"
-                                                                        style="height: 400px"
-                                                                >${content}</pre>
-                                                        </div>
-                                                        <div class="d-grid mt-3">
+                                                                        placeholder="제목"
+                                                                        readonly
+                                                                        value=${title}
+                                                                />
+                                                            </div>
+                                                            <div class="input-group mb-5">
+                                                                <label class="input-group-text" for="telInput">연락처</label>
+                                                                <input
+                                                                        name="contact"
+                                                                        type="tel"
+                                                                        class="form-control m-input"
+                                                                        id="telInput"
+                                                                        required
+                                                                        oninput="telHyphen(this)"
+                                                                        pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
+                                                                        maxlength="13"
+                                                                        placeholder="예) 010-1234-5678"
+                                                                        readonly
+                                                                        value=${contact}
+                                                                />
+                                                            </div>
+                                                            <div class="input-group mb-3">
+                                                                <label class="input-group-text" for="amount">₩</label>
+                                                                <input
+                                                                        id="amount"
+                                                                        name="amount"
+                                                                        type="text"
+                                                                        class="form-control"
+                                                                        placeholder="예) 1000"
+                                                                        readonly
+                                                                        value=${amount}
+                                                                />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            `
+                                                    <div class="row align-items-center mt-3 mb-3">
+                                                        <div class="col">
+                                                            <label for="content" class="h3">상세내용</label>
+                                                            <div class="input-group">
+                                                                    <pre
+                                                                            id="content"
+                                                                            class="form-control"
+                                                                            style="height: 400px"
+                                                                    >${content}</pre>
+                                                            </div>
+                                                            <div class="d-grid mt-3">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                `
                             $('.modal_box').append(temp_html)
                             $('#post_detail').modal('show')
                         }
@@ -336,19 +345,8 @@
                 })
             });
         }
-
-        function logout(){
-            $.removeCookie('mytoken')
-            window.location.href="/"
-
-        }
-
-
     </script>
-
-
 </head>
-
 <body>
 <header>
     <nav class="navbar navbar-expand-lg bg-light navbar-light ">
@@ -364,7 +362,6 @@
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                 </ul>
-
                 <ul class="d-flex navbar-nav">
                     {% if nickname %}
                         <li class="nav-item">
@@ -391,7 +388,6 @@
         </div>
     </nav>
 </header>
-
 <!-- new post modal -->
 <div class="modal" id="write_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="write_modalLabel" aria-hidden="true">
@@ -455,9 +451,9 @@
                                         <input
                                                 id="amount"
                                                 name="amount"
-                                                type="number"
+                                                type="text"
                                                 required
-                                                pattern="^[0-9]+$"
+                                                oninput="wonComma(this)"
                                                 class="form-control"
                                                 placeholder="예) 1000"
                                         />
@@ -468,13 +464,13 @@
                                 <div class="col">
                                     <label for="content" class="h3">상세내용</label>
                                     <div class="input-group">
-                                        <textarea
-                                                id="content"
-                                                name="content"
-                                                class="form-control"
-                                                style="height: 400px"
-                                                placeholder="상세내용"
-                                        ></textarea>
+                                                    <textarea
+                                                            id="content"
+                                                            name="content"
+                                                            class="form-control"
+                                                            style="height: 400px"
+                                                            placeholder="상세내용"
+                                                    ></textarea>
                                     </div>
                                     <div class="d-grid mt-3">
                                     </div>
@@ -492,7 +488,7 @@
     </div>
 </div>
 
-{# 상세페이지 모달#}
+<!-- 상세페이지 modal -->
 <div class="modal" id="post_detail" tabindex="-1" aria-labelledby="post_detailLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -513,10 +509,11 @@
         </div>
     </div>
 </div>
-<!-- image -->
+
+<!-- 상단 이미지 -->
 <div class="mytitle"></div>
 
-<!-- search -->
+<!-- 검색 -->
 <div class="nav-search">
     <div class="search">
         <input class="search-input"
@@ -535,6 +532,5 @@
     <div class="row row-cols-1 row-cols-md-4 g-4" id="posts-box">
     </div>
 </div>
-
 </body>
 </html>

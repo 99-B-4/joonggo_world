@@ -1,27 +1,34 @@
 from datetime import datetime, timedelta
-from flask import Flask, render_template, jsonify, redirect, request, url_for
+from pymongo import MongoClient
+from flask import Flask, render_template, jsonify, redirect, request
+from bson.objectid import ObjectId
 import os
 import jwt
 import hashlib
-from bson.objectid import ObjectId
-
 app = Flask(__name__)
 
-from pymongo import MongoClient
 
-# import certifi
-# client = MongoClient(
-#     'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
-#     tlsCAFile=certifi.where())
-client = MongoClient('localhost', 27017, username="test", password="test")
+# #########################################################
+# 메인 페이지 로드
+# #########################################################
+import certifi
+client = MongoClient(
+    'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
+    tlsCAFile=certifi.where())
+
+# 서버용 DB설정
+# client = MongoClient('localhost', 27017, username="test", password="test")
+
+db = client.joonggo_world
+SECRET_KEY = 'JOONGGO_WORLD'
 
 
-db = client.joongo_world
-SECRET_KEY = 'SPARTA'
-
-
+# #########################################################
+# 페이지 로드
+# #########################################################
 @app.route('/')
 def home():
+    # 토큰값 쿠키에서 받아오기
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
@@ -31,14 +38,15 @@ def home():
         return render_template('mainpage.html')
     except jwt.exceptions.DecodeError:
         return render_template('mainpage.html')
-
-
 @app.route('/login')
 def login():
     msg = request.args.get("msg")
     return render_template('login.html', msg=msg)
 
 
+# #########################################################
+# Login API
+# #########################################################
 @app.route('/api/login', methods=['POST'])
 def api_login():
     id_receive = request.form['username_give']
@@ -65,10 +73,9 @@ def api_login():
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
 
-@app.route('/register')
-def register():
-    return render_template('sign_up.html')
-
+# #########################################################
+# 회원가입 API
+# #########################################################
 @app.route('/api/register', methods=['POST'])
 def api_register():
     id_receive = request.form['username_give']
@@ -81,41 +88,57 @@ def api_register():
 
     return jsonify({'result': 'success'})
 
+
+# #########################################################
+# 회원가입 id 중복체크 API
+# #########################################################
 @app.route('/api/register/check_dup', methods=['POST'])
 def check_dup():
    username_receive = request.form['username_give']
-   exists = bool(db.users.find_one({"username": username_receive}))
+   exists = bool(db.user.find_one({'id': username_receive}))
    return jsonify({'result': 'success', 'exists': exists})
 
 
-# 게시글 불러오기 / 검색 API
+# #########################################################
+# 게시글 불러오기 API
+# #########################################################
 @app.route('/api/postlist', methods=['GET'])
 def api_postlist():
-    parameter_dict = request.args.to_dict()
-    if len(parameter_dict) != 0 and request.args.get('filter') != '':
-        posts = list(db.posts.find({'title': {'$regex': request.args.get('filter')}},
-                                   {"_id": {"$toString": "$_id"}, "title": 1, "img": 1, "contact": 1, "amount": 1,
-                                    "content": 1}))
-        return jsonify({'all_posts': posts})
-
-    posts = list(db.posts.find({}, {"_id": {"$toString": "$_id"}, "title": 1, "img": 1, "contact": 1, "amount": 1,
-                                    "content": 1}))
-    print(posts)
+    posts = list(db.posts.find(
+        {},
+        {"_id": {"$toString": "$_id"}, "title": 1, "img": 1, "user": 1,  "contact": 1, "amount": 1, "content": 1})
+    )
     return jsonify({'all_posts': posts})
 
 
-# 게시글 상세
-@app.route('/api/post', methods=['GET'])
-def api_post():
-    print(request.args.get('p_id'))
-    post = list(db.posts.find({'_id': ObjectId(request.args.get('p_id'))}, {"_id": 0}))
+# #########################################################
+# 게시글 검색 API
+# #########################################################
+@app.route('/api/postlist/<search_val>', methods=['GET'])
+def api_postfind(search_val):
+    posts = list(db.posts.find(
+        {'title': {'$regex': search_val}},
+        {"_id": {"$toString": "$_id"}, "title": 1, "img": 1, "user": 1,  "contact": 1, "amount": 1, "content": 1})
+    )
+    return jsonify({'all_posts': posts})
+
+
+# #########################################################
+# 상세 페이지 API
+# #########################################################
+@app.route('/api/postdetail/<postid>', methods=['GET'])
+def api_post(postid):
+    post = list(db.posts.find({'_id': ObjectId(postid)}, {"_id": 0}))
     return jsonify({'all_posts': post})
 
 
+# #########################################################
 # 게시글 작성 API
+# #########################################################
 @app.route('/api/newpost', methods=['POST'])
 def api_newpost():
     if request.method == 'POST':
+        # 토큰에서 추출한 키값으로 유저명 가져오기
         token_receive = request.cookies.get('mytoken')
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
