@@ -147,6 +147,10 @@
         // #########################################################
         function search_event() {
             search_val = $('#searchKwd').val()
+            if (search_val === '') {
+                location.reload()
+                return
+            }
             $('#noresult').remove()
             $('#posts-box').empty()
             $.ajax({
