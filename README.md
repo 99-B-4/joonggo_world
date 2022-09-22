@@ -39,6 +39,12 @@
         <td width="30%"><b>Request</b></td>
         <td width="31%"><b>Response</b></td>
     </tr>
+    <tr>
+        <td width="12%">메인 페이지 로드</td>
+        <td width="5%">GET</td>
+        <td width="12%">/</td>
+        <td width="30%"></td>
+        <td width="31%"></td>
     </tr>
     <tr>
         <td width="12%">로그인 페이지 로드</td>
@@ -48,32 +54,53 @@
         <td width="31%"></td>
     </tr>
     <tr>
-        <td width="12%">회원가입 페이지 로드</td>
-        <td width="5%">GET</td>
-        <td width="12%">/joinMembership</td>
-        <td width="30%"></td>
-        <td width="31%"></td>
-    </tr>
-    <tr>
-        <td width="12%">글쓰기 페이지 로드</td>
-        <td width="5%"></td>
-        <td width="12%">/writing</td>
-        <td width="30%"></td>
-        <td width="31%"></td>
+        <td width="12%">로그인</td>
+        <td width="5%">POST</td>
+        <td width="12%">/api/login</td>
+        <td width="30%">{'id_receive': username_give, 'pw_receive': password_give}</td>
+        <td width="31%">로그인 성공 - {'result': 'success', 'token': token}<br>로그인 실패 - {'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'}</td>
     </tr>
     <tr>
         <td width="12%">회원가입</td>
         <td width="5%">POST</td>
-        <td width="12%">/signUp</td>
-        <td width="30%">{'id': user_id,  'pw': user_password}</td>
+        <td width="12%">/register</td>
+        <td width="30%">{'id_receive': username_give, 'pw_receive': password_give,  'nickname_receve': user_password}</td>
         <td width="31%">{'msg': '회원가입이 완료되었습니다.'}</td>
     </tr>
     <tr>
-        <td width="12%">로그인</td>
+        <td width="12%">회원가입 id 중복체크</td>
         <td width="5%">POST</td>
-        <td width="12%">/api/login</td>
-        <td width="30%">{'id': username_give, 'pw': password_give}</td>
-        <td width="31%">로그인 성공 - {'result': 'success', 'token': token}<br>로그인 실패 - {'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'}</td>
+        <td width="12%">/register/check_dup</td>
+        <td width="30%">{'username_receive': username_give}</td>
+        <td width="31%">중복 존재 - {'result': 'success', 'exists': True}<br>중복 미존재 - {'result': 'success', 'exists': False}</td>
+    </tr>
+    <tr>
+        <td width="12%">게시글 불러오기</td>
+        <td width="5%">GET</td>
+        <td width="12%">/api/postlist</td>
+        <td width="30%"></td>
+        <td width="31%">'all_posts': posts</td>
+    </tr>
+    <tr>
+        <td width="12%">게시글 검색</td>
+        <td width="5%">GET</td>
+        <td width="12%">/api/postlist/&lt;search_val&gt;</td>
+        <td width="30%">search_val</td>
+        <td width="31%">'all_posts': posts</td>
+    </tr>
+    <tr>
+        <td width="12%">상세페이지</td>
+        <td width="5%">GET</td>
+        <td width="12%">/api/postdetail/&lt;postid&gt;</td>
+        <td width="30%">postid</td>
+        <td width="31%">'all_posts': posts</td>
+    </tr>
+    <tr>
+        <td width="12%">상세페이지</td>
+        <td width="5%">GET</td>
+        <td width="12%">/api/newpost</td>
+        <td width="30%">result=request.form</td>
+        <td width="31%">'all_posts': posts</td>
     </tr>
 </table>
 
