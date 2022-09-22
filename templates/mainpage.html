@@ -152,7 +152,6 @@
                 return
             }
             $('#noresult').remove()
-            $('#posts-box').empty()
             $.ajax({
                 type: "get",
                 url: "/api/postlist/" + search_val,
@@ -175,6 +174,7 @@
         // DB정보 포스트로 보여주기
         // #########################################################
         function load_post(response) {
+            $('#posts-box').empty()
             let posts = response['all_posts']
             for (let i = 0; i < posts.length; i++) {
                 let p_id = posts[i]['_id']
