@@ -11,13 +11,13 @@ app = Flask(__name__)
 # #########################################################
 # 메인 페이지 로드
 # #########################################################
-import certifi
-client = MongoClient(
-    'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
-    tlsCAFile=certifi.where())
+# import certifi
+# client = MongoClient(
+#     'mongodb+srv://joongo_world:QhPRl58WsHjuGxRV@cluster0.amhacid.mongodb.net/?retryWrites=true&w=majority',
+#     tlsCAFile=certifi.where())
 
 # 서버용 DB설정
-# client = MongoClient('localhost', 27017, username="test", password="test")
+client = MongoClient('localhost', 27017, username="test", password="test")
 
 db = client.joonggo_world
 SECRET_KEY = 'JOONGGO_WORLD'
