@@ -1,6 +1,6 @@
 <h3 align="center"><b>미니프로젝트, 중고세상</b></h3>
 
-<h4 align="center">📆 2022.09.19 ~ WIP</h4>
+<h4 align="center">📆 2022.09.19 ~ 2022.09.22</h4>
 <br>
 
 ---
@@ -26,6 +26,12 @@
 <img src="https://img.shields.io/badge/Python-F80000?style=for-the-badge&logo=Python&logoColor=white">
 <img src="https://img.shields.io/badge/Flask-4FC08D?style=for-the-badge&logo=Flask&logoColor=white">
 <img src="https://img.shields.io/badge/MongoDB-61DAFB?style=for-the-badge&logo=MongoDB&logoColor=white">
+
+---
+
+<br>
+<h3 align="center"><b>📃 Project S.A 문서 📃</b></h3>
+<h3 align="center"><a href="https://puri.notion.site/S-A-18f50b1ff27245229f8121dd1b865e81">https://puri.notion.site/S-A-18f50b1ff27245229f8121dd1b865e81</a></h3>
 
 ---
 
@@ -103,5 +109,55 @@
         <td width="31%">'all_posts': posts</td>
     </tr>
 </table>
+
+---
+
+<br>
+<h3 align="center">🤖 Git Action 🤖</h3>
+
+ - main.yml (AWS 환경에 main push 시 ssh 연결 후 ./update.sh 실행)
+```yaml
+name: updateEC2
+
+on:
+  push:
+    branches:
+      - 'main' # 메인이 푸쉬되었을 때 동작
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: SSH commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_SSH_HOST }} # 서버  ip주소
+          username: ${{ secrets.SERVER_SSH_USERNAME }} # 서버 유저이름
+          key: ${{ secrets.SERVER_SSH_KEY }} # AWS 연결 키
+          script:
+            ./update.sh # 서버에 있는 스크립트
+```
+
+- update.sh
+
+```shell
+pkill -9 python
+cd joonggo_world
+git pull
+nohup python app.py  > log.log 2>&1  &
+```
+
+
+Secrets
+- SERVER_SSH_HOST = 서버 IP주소
+- SERVER_SSH_USERNAME = 서버 유저이름
+- SERVER_SSH_KEY = AWS 연결 키
+
+---
 
 <br>
